@@ -3,7 +3,7 @@ import { copyToClipboard } from '@/lib/util';
 import React, { useState } from 'react'
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 
-const DescriptionDisplay = ({ description, setDescription }: any) => {
+const DescriptionDisplay = ({ description, setDescription }: { description: string, setDescription: (description: string) => void }) => {
 
     const [copied, setCopied] = useState(false);
 

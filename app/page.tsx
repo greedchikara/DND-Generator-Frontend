@@ -3,12 +3,13 @@ import DescriptionDisplay from "@/components/ui/DescriptionDisplay";
 import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import PhotoUploader from "@/components/ui/PhotoUploader";
 import Questionnare from "@/components/ui/Questionnare";
+import { IAnswers } from "@/lib/type";
 import { useRef, useState } from "react";
 
 export default function Home() {
 
   const [photos, setPhotos] = useState<File[]>([]);
-  const [answers, setAnswers] = useState({
+  const [answers, setAnswers] = useState<IAnswers>({
     interest: "",
     personality: "",
     partner_preference: ""

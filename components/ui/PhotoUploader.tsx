@@ -1,11 +1,11 @@
 "use client";
 import React, { useRef, useState } from 'react'
-import { PhotoIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { closestCenter, DndContext, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, horizontalListSortingStrategy, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { PhotoIcon } from '@heroicons/react/24/outline';
+import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, horizontalListSortingStrategy, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import SortablePhoto from './SortablePhoto';
 
-const PhotoUploader = ({ photos, setPhotos }: any) => {
+const PhotoUploader = ({ photos, setPhotos }: { photos: File[], setPhotos: (photos: File[]) => void }) => {
 
     const [dragOver, setDragOver] = useState(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -37,19 +37,18 @@ const PhotoUploader = ({ photos, setPhotos }: any) => {
     }
 
     const removePhoto = (index: number): void => {
-        setPhotos(prev => prev.filter((_, i) => i !== index));
+        setPhotos(photos.filter((_: File, i: number) => i !== index));
     }
 
-    const handleDragEnd = (event) => {
+    const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
-        if (active.id == over.id) return;
+        if (!over || active.id === over.id) return;
 
         const oldId = Number(active.id);
         const newId = Number(over.id);
-        setPhotos((prev) => {
-            return arrayMove(prev, oldId, newId);
-        })
-    }
+        const updatedPhotos = arrayMove<File>(photos, oldId, newId);
+        setPhotos(updatedPhotos);
+    };
 
     const sensors = useSensors(
         useSensor(PointerSensor),
