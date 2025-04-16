@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💘 Dating Profile Description Generator (Frontend)
 
-## Getting Started
+A sleek, responsive frontend built with **Next.js** that allows users to generate fun, engaging dating profile descriptions using AI, based on uploaded photos and optional personal input.
 
-First, run the development server:
+### 🌐 Demo
+
+**Live URL**: [https://dnd-generator-frontend.vercel.app/](https://dnd-generator-frontend.vercel.app/)
+
+---
+
+## 🚀 Tech Stack
+
+- [Next.js](https://nextjs.org/) – React framework for server-side rendering
+- [TailwindCSS](https://tailwindcss.com/) – Utility-first CSS for fast UI development
+- [Heroicons](https://heroicons.com/) – Beautiful icons by Tailwind Labs
+- [DND-Kit](https://dndkit.com/) - A lightweight, performant, accessible and
+  extensible drag & drop toolkit for React.
+
+---
+
+## 📦 Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/greedchikara/DND-Generator-Frontend
+cd DND-Generator-Frontend
+```
+
+### 2. Create Environment Variables
+
+Create a `.env.local` file in the root with the following:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+Replace the value with your deployed or local backend API URL.
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+### 4. Run Local Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app will be running at [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🎯 Features
 
-## Learn More
+- Upload 1 to 4 photos (required)
+- Answer up to 3 optional personal questions
+- Drag-and-drop image reordering
+- Realtime image preview using `URL.createObjectURL`
+- Generate dating profile descriptions using AI
+- Displays editable, copyable result
+- Toast notifications for success and error states
+- Responsive mobile-first design
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🖼️ Photo Upload & Display Logic
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Users must upload **at least 1** and **up to 4** photos.
+- Uploaded photos are held in state (`photos`).
+- The **"Generate Description"** button remains disabled until a photo is uploaded.
+- For display and rearrangement, images are previewed using `URL.createObjectURL(file)`.
 
-## Deploy on Vercel
+### 📤 Upload Workflow
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Once the user selects photos and optionally answers the questions:
+2. The frontend:
+   - Uploads each photo as a **1MB chunk** (due to Vercel’s 4.5MB per upload limit).
+   - Collects the returned **photo URLs** from the backend.
+3. It then makes a **second API request** to generate the description, passing:
+   - The list of photo URLs
+   - The optional text responses
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📂 Project Structure (Frontend)
+
+```
+/app
+  page.tsx
+/components
+  PhotoUploader.tsx
+  DescriptionDisplay.tsx
+  Questionnare.tsx
+  SortablePhoto.tsx
+  LoadingOverlay.tsx
+/styles
+  globals.css     # Tailwind setup
+```
+
+---
+
+## 📌 Notes
+
+- Works best when deployed alongside a FastAPI backend that:
+  - Handles file chunking and storage
+  - Generates descriptions using an AI provider like OpenAI
+- This project is fully compatible with deployment on [Vercel](https://vercel.com/)
+
+---
+
+## 🧑‍💻 Author
+
+Made with 💘 by Akash Negi
