@@ -4,6 +4,7 @@ import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import PhotoUploader from "@/components/ui/PhotoUploader";
 import Questionnare from "@/components/ui/Questionnare";
 import { IAnswers } from "@/lib/type";
+import { upload } from "@vercel/blob/client";
 import { useRef, useState } from "react";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 
@@ -20,42 +21,47 @@ export default function Home() {
   const descriptionRef = useRef<HTMLDivElement | null>(null)
 
   const uploadPhotos = async () => {
-    const uploads = photos.map(photo => chunkUpload(photo));
+    const uploads = photos.map(photo => uploadToBlobStore(photo));
     const urls = await Promise.all(uploads);
     return { message: "Successfully uploaded photos!", urls: urls };
   }
 
-  const chunkUpload = async (photo: File) => {
-    const chunkSize = 1024 * 512;
-    let offset = 0;
-    if (!photo) {
-      return;
-    }
-    const totalChunks = Math.ceil(photo.size / chunkSize);
-    let chunkNumber = 0;
-    let photoUrl = "";
-    // TODO: Create a uuid for image name
-    while (offset < photo?.size) {
-      const chunk = photo.slice(offset, offset + chunkSize);
-      const blob = new Blob([chunk], { type: photo.type });
-      const formData = new FormData();
-      formData.append("file", blob);
-      formData.append("name", photo.name);
-      formData.append("chunk_number", String(chunkNumber));
-      formData.append("total_chunks", String(totalChunks));
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upload/chunks`, {
-        body: formData,
-        method: "POST"
-      });
-      const result = await response.json();
-      if (result?.file_url) {
-        photoUrl = result?.file_url;
-      }
-      offset += chunkSize;
-      chunkNumber += 1;
-    }
-    return photoUrl;
+  const uploadToBlobStore = async (photo: File) => {
+    const { url } = await upload(photo.name, photo, { access: "public", handleUploadUrl: '/api/upload' });
+    return url;
   }
+
+  // const chunkUpload = async (photo: File) => {
+  //   const chunkSize = 1024 * 512;
+  //   let offset = 0;
+  //   if (!photo) {
+  //     return;
+  //   }
+  //   const totalChunks = Math.ceil(photo.size / chunkSize);
+  //   let chunkNumber = 0;
+  //   let photoUrl = "";
+  //   // TODO: Create a uuid for image name
+  //   while (offset < photo?.size) {
+  //     const chunk = photo.slice(offset, offset + chunkSize);
+  //     const blob = new Blob([chunk], { type: photo.type });
+  //     const formData = new FormData();
+  //     formData.append("file", blob);
+  //     formData.append("name", photo.name);
+  //     formData.append("chunk_number", String(chunkNumber));
+  //     formData.append("total_chunks", String(totalChunks));
+  //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upload/chunks`, {
+  //       body: formData,
+  //       method: "POST"
+  //     });
+  //     const result = await response.json();
+  //     if (result?.file_url) {
+  //       photoUrl = result?.file_url;
+  //     }
+  //     offset += chunkSize;
+  //     chunkNumber += 1;
+  //   }
+  //   return photoUrl;
+  // }
 
   const handleGenerate = async () => {
     try {
