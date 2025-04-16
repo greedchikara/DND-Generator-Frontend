@@ -64,22 +64,21 @@ export default function Home() {
         toast.error("Please select atleast one picture!");
         return;
       }
+      setLoading(true);
       const photoUploadResponse = await uploadPhotos();
       toast.success(photoUploadResponse.message);
 
       if (photoUploadResponse?.urls?.length == 0) {
         toast.error("Please select atleast 1 photo!");
+        setLoading(false);
         return;
       }
 
-      // const formData = new FormData();
-      // formData.append("photos", photoUrls);
-      // formData.append('answers', answers);
       const bodyData = {
         photos: photoUploadResponse?.urls,
         answers: answers
       };
-      setLoading(true);
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/generate-description`, {
         method: "POST",
         body: JSON.stringify(bodyData),
