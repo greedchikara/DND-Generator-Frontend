@@ -26,7 +26,7 @@ export default function Home() {
   }
 
   const chunkUpload = async (photo: File) => {
-    const chunkSize = 1024 * 1024;
+    const chunkSize = 1024 * 512;
     let offset = 0;
     if (!photo) {
       return;
